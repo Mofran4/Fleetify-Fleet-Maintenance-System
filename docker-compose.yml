@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+
+  db:
+    image: mysql:8.0
+    container_name: fleetify_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: fleetify_db
+      MYSQL_USER: fleetify
+      MYSQL_PASSWORD: fleetify123
+    ports:
+      - "3307:3306"          # 3307 agar tidak bentrok dengan MySQL lokal
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "fleetify", "-pfleetify123"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+
+  app:
+    build: .
+    container_name: fleetify_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: fleetify
+      DB_PASSWORD: fleetify123
+      DB_NAME: fleetify_db
+      APP_PORT: 8080
+      WEBHOOK_URL: ""         # Isi URL webhook jika diperlukan
+    volumes:
+      - uploads:/app/uploads
+
+volumes:
+  db_data:
+  uploads:

@@ -68,7 +68,7 @@ function navigateTo(name) {
 // ═══════════════════════════════════════════════════════════
 async function init() {
   try {
-    // We fetch users using user ID 1 as bootstrap (SA exists by default)
+    // Fetch users using user ID 1 as bootstrap (SA exists by default)
     state.currentUser = { id: 1, username: 'loading', role: 'SA' };
     const [users, vehicles, items] = await Promise.all([
       api('GET', '/users'),

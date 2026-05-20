@@ -10,7 +10,6 @@ COPY go.mod ./
 RUN go mod download || true
 
 COPY . .
-# go mod tidy ensures go.sum is complete inside Docker
 RUN go mod tidy && CGO_ENABLED=0 GOOS=linux go build -o fleetify ./cmd/main.go
 
 # ── Stage 2: Run ───────────────────────────────────────────
